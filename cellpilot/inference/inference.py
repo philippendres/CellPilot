@@ -1,13 +1,13 @@
 import torch
-from ..modeling.model import SamHI
+from cellpilot.modeling.model import SamHI
 import wandb
 from pathlib import Path
 import numpy as np
 import os 
 from segment_anything.utils.transforms import ResizeLongestSide
 from torchvision.transforms.functional import resize, to_pil_image, InterpolationMode
-from ..modeling.predictor import SamHIPredictor
-from models.segmentation.cell_segmentation.cellvit import CellViT256
+from cellpilot.modeling.predictor import SamHIPredictor
+from cellvit.models.segmentation.cell_segmentation.cellvit import CellViT256
 from torchvision import transforms as T
 import torch.nn.functional as F
 from typing import Dict, List, Tuple
