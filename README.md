@@ -28,7 +28,6 @@ We provide a manual setup which allows for training and inference and a docker s
     cd CellViT
     git submodule init
     git submodule update
-    git submodule update --remote
     pip install -e .
     cd ..
     cd SimpleClick

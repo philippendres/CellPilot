@@ -4,6 +4,8 @@ from segment_anything.utils.transforms import ResizeLongestSide
 import cv2
 from .inference import Inference
 import gradio as gr
+from datetime import datetime
+from PIL import Image
 
 class App(Inference):
     def __init__(self, config):
@@ -17,6 +19,9 @@ class App(Inference):
         self.current_refinement = None
         self.prompts = []
         self.transform = ResizeLongestSide(1024)
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.saved_image_path = f"/tmp/saved_image_{self.timestamp}.png"
+        self.saved_mask_path = f"/tmp/saved_mask_{self.timestamp}.png"
 
     def load_image(self, image, interpolation_mode=InterpolationMode.BILINEAR):
         img = image["image"]    
@@ -41,6 +46,23 @@ class App(Inference):
         self.masks = np.zeros((self.h, self.w))
         self.orig_masks = np.array(resize(to_pil_image(self.masks.astype(np.int16)), (int(self.orig_h), int(self.orig_w)), InterpolationMode.NEAREST))
         return {"image": img.astype(np.uint8)}
+
+    def download_image(self):
+        self.save_image()
+        return self.saved_image_path
+    
+    def download_mask(self):
+        self.save_mask()
+        return self.saved_mask_path
+    
+    def save_image(self):
+        img = self.display_current_image()["image"]
+        img_pil = Image.fromarray(img)
+        img_pil.save(self.saved_image_path)
+
+    def save_mask(self):
+        mask_pil = Image.fromarray(self.current_masks[self.upper:self.upper + 1024, self.left:self.left + 1024])
+        mask_pil.save(self.saved_mask_path)
 
     def zoom(self, zoom_factor, image):
         points = image.get("points", [])
